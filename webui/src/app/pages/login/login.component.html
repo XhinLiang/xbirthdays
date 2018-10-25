@@ -1,0 +1,20 @@
+<div class="s-login-pg">
+    <div class="s-login-pg-head">
+        <div style="width:100px;">
+            <s-logo></s-logo>
+        </div>
+        <p style="text-align: center"> Birthdays </p>
+    </div>
+    <form class="s-login-pg-form" name="form" (ngSubmit)="login()" #f="ngForm" novalidate>
+        <input type="text" placeholder="Username (demo)" name="username" [(ngModel)]="model.username"
+               #username="ngModel" required/>
+        <input type="password" placeholder="Password (demo)" name="password" [(ngModel)]="model.password"
+               #password="ngModel" required/>
+        <button type="submit" class="btn btn-primary" style="width: 100px;">LOGIN</button>
+        <button type="button" (click)="goRegister()" class="btn btn-secondary" style="width: 100px;">REGISTER</button>
+    </form>
+    <div class="s-login-pg-foot">
+        <div *ngIf="errMsg" style="color:indianred; font-weight: bold">{{errMsg}}</div>
+    </div>
+
+</div>

@@ -1,0 +1,27 @@
+<div class="pad-16">
+
+    <h3> Your Birth Records </h3>
+
+    <div style="width:1000px">
+        <p>Click one row to delete it.</p>
+        <div style="position: relative">
+            <ngx-datatable
+                style='width:1000px; position: absolute; margin-top: 38px;'
+                class="material"
+                [rows]="rows"
+                [columns]="columns"
+                [headerHeight]="45"
+                [rowHeight]="'auto'"
+                [columnMode]="'standard'"
+                [scrollbarV]="false"
+                trackScroll
+                (activate)="onTableRowActive($event)"
+                (bottom)='onScroll()'>
+            </ngx-datatable>
+            <button style="position:absolute; left: 900px; width:65px; height:65px;"
+                    mat-fab color="primary" (click)="addRecord()">ADD
+            </button>
+        </div>
+    </div>
+    <div *ngIf="isLoading" class="spinner spinner-lg">Loading...</div>
+</div>

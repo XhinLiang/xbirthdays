@@ -1,0 +1,61 @@
+/* You can add global styles to this file, and also import other style files */
+@import './assets/scss/var';
+@import './assets/scss/base';
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import '~@swimlane/ngx-datatable/release/index.css';
+@import '~@swimlane/ngx-datatable/release/themes/material.css';
+@import '~@swimlane/ngx-datatable/release/assets/icons.css';
+
+html {
+    /* make sure we use up the whole viewport */
+    width: 100%;
+    min-height: 100vh;
+}
+body {
+    width: 100%;
+    background-color: $s-bg-gray;
+    //min-height: 100vh; /* this helps with the sticky footer */
+}
+
+// NGX Chart Classes
+ngx-charts-advanced-pie-chart .item-value{
+  margin-top: 0 !important;
+}
+
+header.legend-title{
+  background-color: transparent;
+  color:#333;
+  height:inherit;
+}
+
+.s-dashboard-pg .chart-legend .legend-wrap {
+  width: 105px;
+}
+
+
+// Custom Classes
+.s-badge{
+  font-size:11px;
+  font-weight:normal;
+  border-radius: 2px;
+  padding:2px 5px;
+
+  &.s-badge-error,
+  &.s-badge-onhold   { background-color: $s-c-error; color:$s-c-white;}
+  &.s-badge-warning  { background-color: #ff8e28; color:$s-c-text;}
+  &.s-badge-good     { background-color: $s-c-good; color:$s-c-text;}
+  &.s-badge-new      { background-color: $s-c-info; color:$s-c-white;}
+}
+
+.tile{
+    display:flex;
+    padding:16px;
+    margin:16px;
+    border-radius:2px;
+    &.column { flex-direction: column;}
+    &.center { align-items: center;}
+    &.white {
+        background-color: $s-bg-white;
+        border:1px solid #ccc;
+    }
+}

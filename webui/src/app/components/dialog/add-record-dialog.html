@@ -1,0 +1,32 @@
+<h2 mat-dialog-title>Add BirthRecord</h2>
+<mat-dialog-content>
+    <div class="example-container">
+        <mat-form-field>
+            <input matInput placeholder="Email" [(ngModel)]="model.email" #email="ngModel">
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput placeholder="Nickname" [(ngModel)]="model.nickname" #nickname="ngModel">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-select placeholder="Select" [(ngModel)]="model.birthdayType" #birthdayType="ngModel">
+                <mat-option value="1">Lunar</mat-option>
+                <mat-option value="2">Solar</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput [matDatepicker]="picker" placeholder="Solar Birthday" [(ngModel)]="model.birthday"
+                   #birthday="ngModel">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="false" (click)="onConfirmClick()">Confirm</button>
+    <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
+    <button mat-button [mat-dialog-close]="true" (click)="onNoClick()">Cancel</button>
+</mat-dialog-actions>

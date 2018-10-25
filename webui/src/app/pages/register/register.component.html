@@ -1,0 +1,24 @@
+<div class="s-login-pg">
+    <div class="s-login-pg-head">
+        <div style="width:100px;">
+            <s-logo></s-logo>
+        </div>
+        <p style="text-align: center"> Register </p>
+    </div>
+    <form class="s-login-pg-form" name="form" (ngSubmit)="register()" #f="ngForm" novalidate>
+        <input type="text" placeholder="email" name="email" [(ngModel)]="model.email"
+               #email="ngModel" required/>
+        <input type="text" placeholder="nickname" name="username" [(ngModel)]="model.nickname"
+               #nickname="ngModel" required/>
+        <input type="password" placeholder="password" name="password" [(ngModel)]="model.password"
+               #password="ngModel" required/>
+        <input type="password" placeholder="repeated password" name="repeatedPassword"
+               [(ngModel)]="model.repeatedPassword" #repeatedPassword="ngModel" required/>
+        <button type="submit" class="btn btn-primary">Register</button>
+        <button type="button" (click)="goLogin()" class="btn btn-secondary" style="width: 100px;">LOGIN</button>
+    </form>
+    <div class="s-login-pg-foot">
+        <div *ngIf="registerMessage" style="color:indianred; font-weight: bold">{{registerMessage}}</div>
+    </div>
+
+</div>
