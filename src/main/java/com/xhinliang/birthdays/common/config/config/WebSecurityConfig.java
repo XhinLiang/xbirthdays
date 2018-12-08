@@ -1,11 +1,5 @@
 package com.xhinliang.birthdays.common.config.config;
 
-import com.xhinliang.birthdays.common.config.filter.CorsFilter;
-import com.xhinliang.birthdays.common.config.filter.VerifyTokenFilter;
-import com.xhinliang.birthdays.common.config.security.JwtAuthenticationEntryPoint;
-import com.xhinliang.birthdays.common.config.security.JwtTokenGenerator;
-import com.xhinliang.birthdays.common.config.security.JwtUserDetailsService;
-import com.xhinliang.birthdays.common.db.constant.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +14,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.xhinliang.birthdays.common.config.filter.CorsFilter;
+import com.xhinliang.birthdays.common.config.filter.VerifyTokenFilter;
+import com.xhinliang.birthdays.common.config.security.JwtAuthenticationEntryPoint;
+import com.xhinliang.birthdays.common.config.security.JwtTokenGenerator;
+import com.xhinliang.birthdays.common.config.security.JwtUserDetailsService;
+import com.xhinliang.birthdays.common.db.constant.UserRole;
 
 /**
  * @author xhinliang
