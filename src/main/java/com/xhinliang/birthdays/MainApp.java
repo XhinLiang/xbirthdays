@@ -1,6 +1,9 @@
 package com.xhinliang.birthdays;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -75,14 +78,7 @@ public class MainApp {
         ICommandParser commandParser = new CommandParser(aliasService, new ParameterHelper(aliasService), //
                 alwaysAllowChecker, beanLoader);
 
-        FileLoader fileLoader = path -> {
-            try {
-                return new ClassPathResource(path).getFile();
-            } catch (IOException e) {
-                logger.error("", e);
-                return null;
-            }
-        };
+        FileLoader fileLoader = MainApp::getResourceAsFile;
 
         // CHECKSTYLE:OFF
         XcallWebSocketServer webSocketServer = new XcallWebSocketServer(10010, commandParser, fileLoader);
@@ -97,5 +93,30 @@ public class MainApp {
         }).start();
 
         new Thread(xcallServer::start).start();
+    }
+
+    @SuppressWarnings("Duplicates")
+    private static File getResourceAsFile(String resourcePath) {
+        try {
+            ClassPathResource classPathResource = new ClassPathResource(resourcePath);
+            InputStream in = classPathResource.getInputStream();
+
+            File tempFile = File.createTempFile(String.valueOf(in.hashCode()), ".tmp");
+            tempFile.deleteOnExit();
+
+            try (FileOutputStream out = new FileOutputStream(tempFile)) {
+                // copy stream
+                // CHECKSTYLE:OFF
+                byte[] buffer = new byte[1024];
+                // CHECKSTYLE:ON
+                int bytesRead;
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+            }
+            return tempFile;
+        } catch (IOException e) {
+            return null;
+        }
     }
 }
