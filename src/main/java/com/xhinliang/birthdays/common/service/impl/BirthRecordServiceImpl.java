@@ -1,10 +1,9 @@
 package com.xhinliang.birthdays.common.service.impl;
 
-import com.xhinliang.birthdays.common.db.constant.BirthdayType;
-import com.xhinliang.birthdays.common.db.model.BirthRecordModel;
-import com.xhinliang.birthdays.common.db.repo.BirthRecordModelRepo;
-import com.xhinliang.birthdays.common.dto.PageItem;
-import com.xhinliang.birthdays.common.service.BirthRecordService;
+import java.util.List;
+
+import javax.transaction.NotSupportedException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -12,8 +11,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.NotSupportedException;
-import java.util.List;
+import com.xhinliang.birthdays.common.db.constant.BirthdayType;
+import com.xhinliang.birthdays.common.db.model.BirthRecordModel;
+import com.xhinliang.birthdays.common.db.repo.BirthRecordModelRepo;
+import com.xhinliang.birthdays.common.dto.PageItem;
+import com.xhinliang.birthdays.common.service.BirthRecordService;
 
 /**
  * @author xhinliang
@@ -24,6 +26,7 @@ public class BirthRecordServiceImpl implements BirthRecordService {
 
     private final BirthRecordModelRepo birthRecordModelRepo;
 
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     public BirthRecordServiceImpl(BirthRecordModelRepo birthRecordModelRepo) {
         this.birthRecordModelRepo = birthRecordModelRepo;
@@ -31,6 +34,7 @@ public class BirthRecordServiceImpl implements BirthRecordService {
 
     public BirthRecordModel create(long creatorUserId, String email, String nickname, BirthdayType birthdayType,
         long birthTime) {
+        java.lang.System.currentTimeMillis();
         BirthRecordModel recordModel = new BirthRecordModel();
         recordModel.setEmail(email);
         recordModel.setNickname(nickname);
