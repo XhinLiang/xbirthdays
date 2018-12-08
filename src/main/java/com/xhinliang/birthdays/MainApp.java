@@ -40,12 +40,12 @@ public class MainApp {
 
     private static final Logger logger = LoggerFactory.getLogger(MainApp.class);
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         ConfigurableApplicationContext configurableApplicationContext = new SpringApplication(MainApp.class).run(args);
 
         // fire threads.
         AliasService aliasService = AliasServiceImpl.instance();
-        IAllowInvokeChecker alwaysAllowChecker = (a, b) -> true;
+        IAllowInvokeChecker alwaysAllowChecker = (target, method) -> true;
         IBeanLoader beanLoader = new IBeanLoader() {
 
             @Nullable
