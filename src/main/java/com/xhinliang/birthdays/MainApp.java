@@ -1,8 +1,6 @@
 package com.xhinliang.birthdays;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import javax.annotation.Nonnull;
@@ -22,12 +20,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.kuaishou.xcall.XcallServer;
 import com.kuaishou.xcall.core.alias.AliasService;
-import com.kuaishou.xcall.core.alias.AliasServiceImpl;
+import com.kuaishou.xcall.core.alias.AliasServiceFileImpl;
 import com.kuaishou.xcall.core.parse.CommandParser;
 import com.kuaishou.xcall.core.parse.IBeanLoader;
 import com.kuaishou.xcall.core.parse.ICommandParser;
 import com.kuaishou.xcall.core.parse.ParameterHelper;
 import com.kuaishou.xcall.core.security.IAllowInvokeChecker;
+import com.kuaishou.xcall.core.util.FunctionUtils;
 import com.kuaishou.xcall.websocket.FileLoader;
 import com.kuaishou.xcall.websocket.XcallWebSocketServer;
 
@@ -44,7 +43,7 @@ public class MainApp {
         ConfigurableApplicationContext configurableApplicationContext = new SpringApplication(MainApp.class).run(args);
 
         // fire threads.
-        AliasService aliasService = AliasServiceImpl.instance();
+        AliasService aliasService = AliasServiceFileImpl.instance();
         IAllowInvokeChecker alwaysAllowChecker = (target, method) -> true;
         IBeanLoader beanLoader = new IBeanLoader() {
 
@@ -100,22 +99,8 @@ public class MainApp {
         try {
             ClassPathResource classPathResource = new ClassPathResource(resourcePath);
             InputStream in = classPathResource.getInputStream();
-
-            File tempFile = File.createTempFile(String.valueOf(in.hashCode()), ".tmp");
-            tempFile.deleteOnExit();
-
-            try (FileOutputStream out = new FileOutputStream(tempFile)) {
-                // copy stream
-                // CHECKSTYLE:OFF
-                byte[] buffer = new byte[1024];
-                // CHECKSTYLE:ON
-                int bytesRead;
-                while ((bytesRead = in.read(buffer)) != -1) {
-                    out.write(buffer, 0, bytesRead);
-                }
-            }
-            return tempFile;
-        } catch (IOException e) {
+            return FunctionUtils.getTempFileFromInputStream(in);
+        } catch (Exception e) {
             return null;
         }
     }
