@@ -19,20 +19,17 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.kuaishou.xcall.XcallServer;
-import com.kuaishou.xcall.core.alias.AliasService;
-import com.kuaishou.xcall.core.alias.AliasServiceFileImpl;
-import com.kuaishou.xcall.core.parse.CommandParser;
-import com.kuaishou.xcall.core.parse.IBeanLoader;
-import com.kuaishou.xcall.core.parse.ICommandParser;
-import com.kuaishou.xcall.core.parse.ParameterHelper;
-import com.kuaishou.xcall.core.security.IAllowInvokeChecker;
+import com.kuaishou.xcall.core.parse.EvalKiller;
+import com.kuaishou.xcall.core.parse.EvalOgnlKiller;
+import com.kuaishou.xcall.core.parse.IEvalKiller;
 import com.kuaishou.xcall.core.util.FunctionUtils;
-import com.kuaishou.xcall.websocket.FileLoader;
+import com.kuaishou.xcall.interfaze.FileLoader;
+import com.kuaishou.xcall.interfaze.IBeanLoader;
 import com.kuaishou.xcall.websocket.XcallWebSocketServer;
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = { "com.xhinliang.birthdays.common.db.repo" })
-@EntityScan(basePackages = { "com.xhinliang.birthdays.common.db.model" })
+@EnableJpaRepositories(basePackages = {"com.xhinliang.birthdays.common.db.repo"})
+@EntityScan(basePackages = {"com.xhinliang.birthdays.common.db.model"})
 @EnableScheduling
 @EnableTransactionManagement
 public class MainApp {
@@ -43,8 +40,6 @@ public class MainApp {
         ConfigurableApplicationContext configurableApplicationContext = new SpringApplication(MainApp.class).run(args);
 
         // fire threads.
-        AliasService aliasService = AliasServiceFileImpl.instance();
-        IAllowInvokeChecker alwaysAllowChecker = (target, method) -> true;
         IBeanLoader beanLoader = new IBeanLoader() {
 
             @Nullable
@@ -74,14 +69,12 @@ public class MainApp {
             }
         };
 
-        ICommandParser commandParser = new CommandParser(aliasService, new ParameterHelper(aliasService), //
-                alwaysAllowChecker, beanLoader);
-
+        IEvalKiller evalKiller = new EvalOgnlKiller(beanLoader);
         FileLoader fileLoader = MainApp::getResourceAsFile;
 
         // CHECKSTYLE:OFF
-        XcallWebSocketServer webSocketServer = new XcallWebSocketServer(10010, commandParser, fileLoader);
-        XcallServer xcallServer = new XcallServer(10086, commandParser);
+        XcallWebSocketServer webSocketServer = new XcallWebSocketServer(10010, evalKiller, fileLoader);
+        XcallServer xcallServer = new XcallServer(10086, evalKiller);
         // CHECKSTYLE:ON
         new Thread(() -> {
             try {
