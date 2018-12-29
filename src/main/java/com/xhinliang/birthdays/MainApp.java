@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.xhinliang.godcall.handler.GodCallAliasHandler;
 import com.xhinliang.godcall.handler.GodCallCoreHandler;
 import com.xhinliang.godcall.handler.GodCallLoginHandler;
 import com.xhinliang.godcall.handler.IGodCallHandler;
@@ -43,7 +44,8 @@ public class MainApp {
 
     private static final Map<String, Map> LOCAL_CONTEXT = new HashMap<>();
 
-    private static final Map<String, String> USER_PASSWORD = ImmutableMap.<String, String> builder().put("xhinliang", "1l1l1l") //
+    private static final Map<String, String> USER_PASSWORD = ImmutableMap.<String, String> builder() //
+            .put("xhinliang", "1l1l1l") //
             .build();
 
     public static void main(String[] args) {
@@ -84,6 +86,7 @@ public class MainApp {
 
         List<IGodCallHandler> handlers = Lists.newArrayList(//
                 new GodCallLoginHandler((username, password) -> password.equals(USER_PASSWORD.get(username))), //
+                new GodCallAliasHandler(beanLoader), //
                 new GodCallCoreHandler(evalKiller) //
         );
 
