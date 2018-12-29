@@ -248,8 +248,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.kuaishou</groupId>
-            <artifactId>xcall</artifactId>
+            <groupId>com.xhinliang</groupId>
+            <artifactId>godcall</artifactId>
             <version>1.0.2</version>
-        </dependency>    </dependencies>
+        </dependency>
+    </dependencies>
 </project>

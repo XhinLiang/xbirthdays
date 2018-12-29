@@ -2,6 +2,9 @@ package com.xhinliang.birthdays;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -18,28 +21,35 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.kuaishou.xcall.XcallServer;
-import com.kuaishou.xcall.core.parse.EvalKiller;
-import com.kuaishou.xcall.core.parse.EvalOgnlKiller;
-import com.kuaishou.xcall.core.parse.IEvalKiller;
-import com.kuaishou.xcall.core.util.FunctionUtils;
-import com.kuaishou.xcall.interfaze.FileLoader;
-import com.kuaishou.xcall.interfaze.IBeanLoader;
-import com.kuaishou.xcall.websocket.XcallWebSocketServer;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.xhinliang.godcall.handler.GodCallCoreHandler;
+import com.xhinliang.godcall.handler.GodCallLoginHandler;
+import com.xhinliang.godcall.handler.IGodCallHandler;
+import com.xhinliang.godcall.interfaze.FileLoader;
+import com.xhinliang.godcall.interfaze.IBeanLoader;
+import com.xhinliang.godcall.parse.GodCallEvalKiller;
+import com.xhinliang.godcall.util.FunctionUtils;
+import com.xhinliang.godcall.websocket.GodCallWebSocketServer;
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = {"com.xhinliang.birthdays.common.db.repo"})
-@EntityScan(basePackages = {"com.xhinliang.birthdays.common.db.model"})
+@EnableJpaRepositories(basePackages = { "com.xhinliang.birthdays.common.db.repo" })
+@EntityScan(basePackages = { "com.xhinliang.birthdays.common.db.model" })
 @EnableScheduling
 @EnableTransactionManagement
 public class MainApp {
 
     private static final Logger logger = LoggerFactory.getLogger(MainApp.class);
 
+    private static final Map<String, Map> LOCAL_CONTEXT = new HashMap<>();
+
+    private static final Map<String, String> USER_PASSWORD = ImmutableMap.<String, String> builder().put("xhinliang", "1l1l1l") //
+            .build();
+
     public static void main(String[] args) {
         ConfigurableApplicationContext configurableApplicationContext = new SpringApplication(MainApp.class).run(args);
 
-        // fire threads.
+        // godcall threads.
         IBeanLoader beanLoader = new IBeanLoader() {
 
             @Nullable
@@ -69,12 +79,25 @@ public class MainApp {
             }
         };
 
-        IEvalKiller evalKiller = new EvalOgnlKiller(beanLoader);
+        GodCallEvalKiller evalKiller = new GodCallEvalKiller(beanLoader);
         FileLoader fileLoader = MainApp::getResourceAsFile;
 
+        List<IGodCallHandler> handlers = Lists.newArrayList(//
+                new GodCallLoginHandler((username, password) -> password.equals(USER_PASSWORD.get(username))), //
+                new GodCallCoreHandler(evalKiller) //
+        );
+
+        evalKiller.setLocalContextSupplier(commandContext -> LOCAL_CONTEXT //
+                .computeIfAbsent(commandContext.getGodCallUser().getUserName(), (user) -> new HashMap()) //
+        );
+
+        evalKiller.setChecker(commandContext -> {
+            logger.info("user:{}, eval:{}", commandContext.getGodCallUser().getUserName(), commandContext.getCommand());
+            return true;
+        });
+
         // CHECKSTYLE:OFF
-        XcallWebSocketServer webSocketServer = new XcallWebSocketServer(10010, evalKiller, fileLoader);
-        XcallServer xcallServer = new XcallServer(10086, evalKiller);
+        GodCallWebSocketServer webSocketServer = new GodCallWebSocketServer(10010, handlers, fileLoader);
         // CHECKSTYLE:ON
         new Thread(() -> {
             try {
@@ -83,8 +106,6 @@ public class MainApp {
                 logger.error("ops.", e);
             }
         }).start();
-
-        new Thread(xcallServer::start).start();
     }
 
     @SuppressWarnings("Duplicates")
