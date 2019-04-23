@@ -70,7 +70,7 @@ public class MainApp {
         ConfigurableApplicationContext configurableApplicationContext = new SpringApplication(MainApp.class).run(args);
 
         // jugg threads.
-        IBeanLoader beanLoader = new FlexibleBeanLoader() {
+        IBeanLoader beanLoader = new FlexibleBeanLoader(PREFER_FQCN) {
 
             @Override
             protected Object getActualBean(String name) {
