@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -72,14 +74,24 @@ public class MainApp {
         // jugg threads.
         IBeanLoader beanLoader = new FlexibleBeanLoader(PREFER_FQCN) {
 
+            @Nullable
             @Override
             protected Object getActualBean(String name) {
-                return configurableApplicationContext.getBean(name);
+                try {
+                    return configurableApplicationContext.getBean(name);
+                } catch (Exception ex) {
+                    return null;
+                }
             }
 
+            @Nullable
             @Override
             public Object getBeanByClass(@Nonnull Class<?> clazz) {
-                return configurableApplicationContext.getBean(clazz);
+                try {
+                    return configurableApplicationContext.getBean(clazz);
+                } catch (Exception ex) {
+                    return null;
+                }
             }
         };
 
